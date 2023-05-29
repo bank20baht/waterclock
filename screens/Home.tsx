@@ -1,12 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Divider, Text} from 'react-native-paper';
-
+import CardTime from '../components/CardTime';
+import ProgressCircle from 'react-native-progress-circle';
 type Props = {};
 
 const Home = (props: Props) => {
   const [amount, setAmount] = useState<number>(0);
-
+  const maxAmount = 3000;
   const handleDrinked = () => {
     setAmount(prevAmount => prevAmount + 300);
   };
@@ -29,14 +36,30 @@ const Home = (props: Props) => {
 
   return (
     <View style={[styles.container]}>
-      <TouchableOpacity onPress={handleDrinked}>
-        <View style={[styles.circle, {backgroundColor: circleColor}]}>
-          <Text>{amount}</Text>
+      <ScrollView>
+        <View style={{alignItems: 'center'}}>
+          <Pressable onPress={handleDrinked}>
+            <ProgressCircle
+              percent={(amount / maxAmount) * 100}
+              radius={100}
+              borderWidth={8}
+              color="#3399FF"
+              shadowColor="#999"
+              bgColor="red">
+              <Text style={{fontSize: 18}}>{(amount / maxAmount) * 100}%</Text>
+            </ProgressCircle>
+          </Pressable>
         </View>
-      </TouchableOpacity>
-      <Divider />
-      <Text style={styles.title}>Home</Text>
-      <Divider />
+
+        <View style={{}}>
+          <CardTime />
+          <CardTime />
+          <CardTime />
+          <CardTime />
+          <CardTime />
+          <CardTime />
+        </View>
+      </ScrollView>
     </View>
   );
 };
@@ -47,14 +70,6 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     flex: 1,
-    alignItems: 'center',
-  },
-  circle: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   title: {
     color: 'black',

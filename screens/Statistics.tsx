@@ -1,6 +1,5 @@
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import {ContributionGraph} from 'react-native-chart-kit';
 
 type Props = {};
 
@@ -18,33 +17,55 @@ const commitsData = [
   {date: '2023-05-28', count: 4},
 ];
 
-const chartConfig = {
-  backgroundGradientFrom: 'rgba(30, 41, 35, 0)',
-  backgroundGradientFromOpacity: 0,
-  backgroundGradientTo: 'rgba(8, 19, 13, 0)',
-  backgroundGradientToOpacity: 0,
-  color: (opacity = 1) => `rgba(26, 146, 255, ${opacity})`, // Changed to blue color
-  strokeWidth: 2,
-  barPercentage: 0.5,
+const data = {
+  labels: [
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '15',
+    '16',
+    '17',
+    '18',
+    '19',
+    '20',
+    '21',
+    '22',
+    '23',
+    '24',
+    '25',
+    '26',
+    '27',
+    '28',
+    '29',
+    '30',
+  ],
+  datasets: [
+    {
+      data: [
+        20, 45, 28, 80, 99, 43, 45, 93, 15, 51, 64, 12, 17, 37, 52, 73, 84, 25,
+        36, 68, 91, 32, 69, 88, 47, 16, 56, 72, 77, 49,
+      ],
+    },
+  ],
 };
+
 const screenWidth = Dimensions.get('window').width;
 const Statistics = (props: Props) => {
   return (
     <View>
       <Text>Statistics</Text>
-      <View>
-        <ContributionGraph
-          values={commitsData}
-          endDate={new Date()}
-          numDays={105}
-          width={screenWidth}
-          height={220}
-          chartConfig={chartConfig}
-          tooltipDataAttrs={{
-            strokeWidth: 1,
-          }}
-        />
-      </View>
+      <View></View>
     </View>
   );
 };
