@@ -1,12 +1,25 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-
+import React, {useState} from 'react';
+import {
+  ActivityIndicator,
+  MD2Colors,
+  useTheme,
+  TextInput,
+} from 'react-native-paper';
 type Props = {};
 
 const Home = (props: Props) => {
+  const theme = useTheme();
+  const [text, setText] = useState('');
+
   return (
-    <View>
-      <Text>Home</Text>
+    <View style={{backgroundColor: theme.colors.primary, flex: 1}}>
+      <Text style={{color: 'white'}}>Home</Text>
+      <TextInput
+        label="Email"
+        value={text}
+        onChangeText={text => setText(text)}
+      />
     </View>
   );
 };
