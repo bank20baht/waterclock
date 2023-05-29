@@ -5,6 +5,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
+import {SCREEN_NAME} from './constants/screensNames';
 import Home from './screens/Home';
 import Statistics from './screens/Statistics';
 import Setting from './screens/Setting';
@@ -16,17 +17,36 @@ type Props = {};
 
 const TabScreens = () => {
   return (
-    <Tab.Navigator>
-      <Tab.Screen name="Home" component={Home} options={{title: 'Home'}} />
+    <Tab.Navigator initialRouteName={SCREEN_NAME.HOME_PAGE}>
       <Tab.Screen
-        name="Statistics"
-        component={Statistics}
-        options={{title: 'Statistics'}}
+        name={SCREEN_NAME.HOME_PAGE}
+        component={Home}
+        options={{
+          title: 'Home',
+          tabBarIcon: () => {
+            return <AntDesign name="home" size={20} />;
+          },
+        }}
       />
       <Tab.Screen
-        name="Setting"
+        name={SCREEN_NAME.STAT_PAGE}
+        component={Statistics}
+        options={{
+          title: 'Statistics',
+          tabBarIcon: () => {
+            return <AntDesign name="areachart" size={20} />;
+          },
+        }}
+      />
+      <Tab.Screen
+        name={SCREEN_NAME.SETTING_PAGE}
         component={Setting}
-        options={{title: 'Setting'}}
+        options={{
+          title: 'Setting',
+          tabBarIcon: () => {
+            return <AntDesign name="tool" size={20} />;
+          },
+        }}
       />
     </Tab.Navigator>
   );
