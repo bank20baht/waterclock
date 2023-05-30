@@ -4,30 +4,21 @@ import {Button, Text} from 'react-native-paper';
 import CardTime from '../components/CardTime';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 
-const items = [
-  {
-    time: '13.30',
-    amount: 300,
-  },
-  {
-    time: '16.30',
-    amount: 300,
-  },
-  {
-    time: '17.30',
-    amount: 300,
-  },
-  {
-    time: '18.30',
-    amount: 300,
-  },
-];
-
 const Home = (props: any) => {
   const [amount, setAmount] = useState<number>(0);
+  const [items, setItems] = useState<any>([]);
   const maxAmount = 3000;
 
   const handleDrinked = () => {
+    const currentTime = new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    const newItem = {
+      time: currentTime,
+      amount: 300,
+    };
+    setItems((prevItems: any) => [...prevItems, newItem]);
     setAmount(prevAmount => prevAmount + 300);
   };
 
@@ -36,7 +27,6 @@ const Home = (props: any) => {
   }, [amount]);
 
   const percentFilled = (amount / maxAmount) * 100;
-
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -48,11 +38,14 @@ const Home = (props: any) => {
               duration={5000}
               color={'#69b4ff'}
               fullColor={'#0085ff'}
+              backgroundColor={'white'}
             />
           </Pressable>
         </View>
         {items ? (
-          items.map((item, index) => <CardTime key={index} value={item} />)
+          items.map((item: any, index: number) => (
+            <CardTime key={index} value={item} />
+          ))
         ) : (
           <Text>Hello</Text>
         )}
