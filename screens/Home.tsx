@@ -1,19 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {Divider, Text} from 'react-native-paper';
+import {Pressable, ScrollView, StyleSheet, View} from 'react-native';
+import {Text} from 'react-native-paper';
 import CardTime from '../components/CardTime';
 import ProgressCircle from 'react-native-progress-circle';
-type Props = {};
 
-const Home = (props: Props) => {
-  const [amount, setAmount] = useState<number>(0);
+const Home = (prop: any) => {
+  const [amount, setAmount] = useState(0);
   const maxAmount = 3000;
+
   const handleDrinked = () => {
     setAmount(prevAmount => prevAmount + 300);
   };
@@ -22,36 +16,26 @@ const Home = (props: Props) => {
     console.log(`Amount changed: ${amount}`);
   }, [amount]);
 
-  const getCircleColor = () => {
-    if (amount < 1000) {
-      return 'green';
-    } else if (amount < 2000) {
-      return 'yellow';
-    } else {
-      return 'red';
-    }
-  };
-
-  const circleColor = getCircleColor();
+  const percentFilled = (amount / maxAmount) * 100;
 
   return (
-    <View style={[styles.container]}>
+    <View style={styles.container}>
       <ScrollView>
-        <View style={{alignItems: 'center'}}>
+        <View style={styles.center}>
           <Pressable onPress={handleDrinked}>
             <ProgressCircle
-              percent={(amount / maxAmount) * 100}
+              percent={percentFilled}
               radius={100}
               borderWidth={8}
               color="#3399FF"
               shadowColor="#999"
               bgColor="red">
-              <Text style={{fontSize: 18}}>{(amount / maxAmount) * 100}%</Text>
+              <Text style={styles.circleText}>กดเมื่อดื่ม</Text>
             </ProgressCircle>
           </Pressable>
         </View>
 
-        <View style={{}}>
+        <View>
           <CardTime />
           <CardTime />
           <CardTime />
@@ -68,12 +52,13 @@ export default Home;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
     flex: 1,
+    padding: 10,
   },
-  title: {
-    color: 'black',
-    fontSize: 24,
-    marginTop: 16,
+  center: {
+    alignItems: 'center',
+  },
+  circleText: {
+    fontSize: 18,
   },
 });

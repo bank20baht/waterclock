@@ -1,10 +1,10 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-
+import SplashScreen from 'react-native-splash-screen';
 import {SCREEN_NAME} from './constants/screensNames';
 import Home from './screens/Home';
 import Statistics from './screens/Statistics';
@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 
 type Props = {};
 
-const TabScreens = () => {
+const TabScreens = (prop: any) => {
   return (
     <Tab.Navigator initialRouteName={SCREEN_NAME.HOME_PAGE}>
       <Tab.Screen
@@ -53,6 +53,10 @@ const TabScreens = () => {
 };
 
 const App = (props: Props) => {
+  useEffect(() => {
+    SplashScreen.hide();
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
