@@ -2,9 +2,13 @@ import {StyleSheet, View} from 'react-native';
 import {Card, Text} from 'react-native-paper';
 import React from 'react';
 
-type Props = {};
+type Props = {
+  value: {time: any; amount: any};
+};
 
 const CardTime = (props: Props) => {
+  const {time, amount} = props.value;
+
   return (
     <Card style={{marginVertical: 5}}>
       <Card.Content
@@ -13,8 +17,8 @@ const CardTime = (props: Props) => {
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
-        <Text variant="titleLarge">10.17 AM</Text>
-        <Text variant="bodyMedium">300 ml</Text>
+        <Text variant="titleLarge">{time}</Text>
+        <Text variant="bodyMedium">{amount}</Text>
       </Card.Content>
     </Card>
   );

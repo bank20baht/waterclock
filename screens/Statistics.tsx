@@ -64,8 +64,8 @@ const screenWidth = Dimensions.get('window').width;
 const Statistics = (props: Props) => {
   return (
     <View>
-      <Text>Statistics</Text>
-      <View></View>
+      <Text>รายงานน้ำดื่ม</Text>
+      <Text>เฉลี่ยรายสัปดาห์</Text>
     </View>
   );
 };
