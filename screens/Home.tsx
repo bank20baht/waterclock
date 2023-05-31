@@ -46,17 +46,16 @@ const Home = (props: any) => {
   };
 
   const resetButton = () => {
-    const newAmount = 0;
     db.transaction((tx: any) => {
       tx.executeSql(
-        `UPDATE watertrack SET amount = ? WHERE date = ?`,
-        [newAmount, currentDate],
+        `DELETE FROM watertrack WHERE date = ?`,
+        [currentDate],
         (_: any, result: any) => {
-          console.log('Data updated successfully');
-          setAmount(newAmount); // Update the amount state with the new amount
+          console.log('Data deleted successfully');
+          setAmount(0); // Update the amount state to 0
         },
         (error: any) => {
-          console.error('Failed to update data: ', error);
+          console.error('Failed to delete data: ', error);
         },
       );
     });
@@ -90,7 +89,7 @@ const Home = (props: any) => {
       await new Promise<void>((resolve, reject) => {
         db.transaction((tx: any) => {
           tx.executeSql(
-            `SELECT amount, time FROM watertrack WHERE date = ? ORDER BY id DESC`,
+            `SELECT id, amount, time FROM watertrack WHERE date = ? ORDER BY id DESC`,
             [currentDate],
             (_: any, {rows}: any) => {
               setItems(rows.raw());
@@ -129,12 +128,12 @@ const Home = (props: any) => {
             />
           </Pressable>
           <Button mode={'contained'} onPress={resetButton}>
-            Hello
+            RESET
           </Button>
         </View>
         {items.length > 0 ? (
           items.map((item: any, index: number) => (
-            <CardTime key={index} value={item} />
+            <CardTime key={item.id} value={item} />
           ))
         ) : (
           <Text>Hello</Text>
