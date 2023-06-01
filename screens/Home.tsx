@@ -23,26 +23,34 @@ const Home = (props: any) => {
   const [items, setItems] = useState<any>([]);
   const maxAmount = 3000;
 
-  const handleDrinkPress = () => {
+  const handleDrinkPress = async () => {
     const newAmount = 300; // Get the updated amount after incrementing
     const currentTime = new Date().toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
     });
 
-    db.transaction((tx: any) => {
-      tx.executeSql(
-        `INSERT INTO watertrack (amount, date, status, time) VALUES (?,?,?,?)`,
-        [newAmount, currentDate, status, currentTime],
-        (_: any, result: any) => {
-          console.log('Data inserted successfully');
-          setAmount(newAmount); // Update the amount state with the new amount
-        },
-        (error: any) => {
-          console.error('Failed to insert data: ', error);
-        },
-      );
-    });
+    try {
+      await new Promise((resolve, reject) => {
+        db.transaction((tx: any) => {
+          tx.executeSql(
+            `INSERT INTO watertrack (amount, date, status, time) VALUES (?,?,?,?)`,
+            [newAmount, currentDate, status, currentTime],
+            (_: any, result: any) => {
+              console.log('Data inserted successfully');
+              setAmount(newAmount); // Update the amount state with the new amount
+              resolve(result);
+            },
+            (error: any) => {
+              console.error('Failed to insert data: ', error);
+              reject(error);
+            },
+          );
+        });
+      });
+    } catch (error) {
+      console.error('Failed to insert data: ', error);
+    }
   };
 
   const resetButton = () => {
