@@ -29,7 +29,7 @@ const Home = (props: any) => {
       hour: '2-digit',
       minute: '2-digit',
     });
-
+    const newAmount_display = newAmount + amount;
     try {
       await new Promise((resolve, reject) => {
         db.transaction((tx: any) => {
@@ -38,7 +38,7 @@ const Home = (props: any) => {
             [newAmount, currentDate, status, currentTime],
             (_: any, result: any) => {
               console.log('Data inserted successfully');
-              setAmount(newAmount); // Update the amount state with the new amount
+              setAmount(newAmount_display); // Update the amount state with the new amount
               resolve(result);
             },
             (error: any) => {
