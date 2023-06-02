@@ -1,9 +1,11 @@
+import {StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
-import {StyleSheet, View, Pressable} from 'react-native';
+import {Card, Switch, Text} from 'react-native-paper';
+import {Pressable} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {Card, Text, Switch} from 'react-native-paper';
-import CardSetTIme from '../components/CardSetTIme';
-const Setting = () => {
+type Props = {};
+
+const CardSetTIme = (props: Props) => {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [selectedTime, setSelectedTime] = useState(new Date());
   const [isSwitchOn, setIsSwitchOn] = useState(false);
@@ -32,9 +34,8 @@ const Setting = () => {
   const onToggleSwitch = () => {
     setIsSwitchOn(!isSwitchOn);
   };
-
   return (
-    <View style={styles.container}>
+    <View>
       <Card style={styles.cardContainer}>
         <View style={styles.rowContainer}>
           <Pressable onPress={showTimePickerModal}>
@@ -43,7 +44,6 @@ const Setting = () => {
           <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
         </View>
       </Card>
-
       {showTimePicker && (
         <DateTimePicker
           mode="time"
@@ -52,14 +52,11 @@ const Setting = () => {
           onChange={handleTimeChange}
         />
       )}
-      <View>
-        <Text>Hello</Text>
-        <CardSetTIme />
-        <CardSetTIme />
-      </View>
     </View>
   );
 };
+
+export default CardSetTIme;
 
 const styles = StyleSheet.create({
   container: {
@@ -79,5 +76,3 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 });
-
-export default Setting;
