@@ -4,7 +4,7 @@ import {Button, Text} from 'react-native-paper';
 import CardTime from '../components/CardTime';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 import {openDatabase, createTable} from '../utils/db';
-
+import CardCapacity from '../components/CardCapacity';
 const db = openDatabase();
 createTable(db); // create table in first time
 
@@ -123,6 +123,7 @@ const Home = (props: any) => {
   const percentFilled = (amount / maxAmount) * 100;
   return (
     <View style={styles.container}>
+      <CardCapacity currentAmount={amount || 0} goalAmount={maxAmount} />
       <ScrollView>
         <View style={styles.center}>
           <Pressable onPress={handleDrinkPress}>

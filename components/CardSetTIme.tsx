@@ -3,12 +3,15 @@ import React, {useState} from 'react';
 import {Card, Switch, Text} from 'react-native-paper';
 import {Pressable} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-type Props = {};
+type Props = {
+  date: Date;
+  switchOn: boolean;
+};
 
 const CardSetTIme = (props: Props) => {
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(new Date());
-  const [isSwitchOn, setIsSwitchOn] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(new Date(props.date));
+  const [isSwitchOn, setIsSwitchOn] = useState(props.switchOn);
 
   const formatTime = (date: Date) => {
     const formatted = date.toLocaleTimeString([], {
@@ -39,7 +42,7 @@ const CardSetTIme = (props: Props) => {
       <Card style={styles.cardContainer}>
         <View style={styles.rowContainer}>
           <Pressable onPress={showTimePickerModal}>
-            <Text variant="titleLarge">{formatTime(selectedTime)}</Text>
+            <Text variant="headlineLarge">{formatTime(selectedTime)}</Text>
           </Pressable>
           <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
         </View>
@@ -65,6 +68,8 @@ const styles = StyleSheet.create({
   cardContainer: {
     marginVertical: 5,
     justifyContent: 'center',
+    padding: 10,
+    margin: 10,
   },
   rowContainer: {
     flexDirection: 'row',
