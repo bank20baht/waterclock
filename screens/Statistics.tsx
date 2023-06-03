@@ -1,71 +1,96 @@
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {openDatabase} from '../utils/db';
+import {BarChart} from 'react-native-chart-kit';
+import {Card} from 'react-native-paper';
+import {useFocusEffect} from '@react-navigation/native';
+
+const db = openDatabase();
 
 type Props = {};
 
-const commitsData = [
-  {date: '2023-05-18', count: 1},
-  {date: '2023-05-19', count: 2},
-  {date: '2023-05-20', count: 3},
-  {date: '2023-05-21', count: 4},
-  {date: '2023-05-22', count: 5},
-  {date: '2023-05-23', count: 2},
-  {date: '2023-05-24', count: 3},
-  {date: '2023-05-25', count: 2},
-  {date: '2023-05-26', count: 4},
-  {date: '2023-05-27', count: 2},
-  {date: '2023-05-28', count: 4},
-];
-
-const data = {
-  labels: [
-    '1',
-    '2',
-    '3',
-    '4',
-    '5',
-    '6',
-    '7',
-    '8',
-    '9',
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '15',
-    '16',
-    '17',
-    '18',
-    '19',
-    '20',
-    '21',
-    '22',
-    '23',
-    '24',
-    '25',
-    '26',
-    '27',
-    '28',
-    '29',
-    '30',
-  ],
-  datasets: [
-    {
-      data: [
-        20, 45, 28, 80, 99, 43, 45, 93, 15, 51, 64, 12, 17, 37, 52, 73, 84, 25,
-        36, 68, 91, 32, 69, 88, 47, 16, 56, 72, 77, 49,
-      ],
-    },
-  ],
+type Data = {
+  date: Date;
+  sumdaily: number;
 };
 
-const screenWidth = Dimensions.get('window').width;
 const Statistics = (props: Props) => {
+  const [data, setData] = useState<Data[]>([]);
+
+  const fetchData = async () => {
+    try {
+      await new Promise<void>((resolve, reject) => {
+        db.transaction((tx: any) => {
+          const currentDate = new Date();
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(currentDate.getDate() - 7);
+
+          tx.executeSql(
+            `SELECT date, SUM(amount) as sumdaily FROM watertrack WHERE date >= ? AND date <= ? GROUP BY date ORDER BY date DESC`,
+            [sevenDaysAgo.toISOString(), currentDate.toISOString()],
+            (_: any, {rows}: any) => {
+              console.log('Data received (SUM amount) successfully');
+              if (rows.length > 0) {
+                setData(rows.raw());
+              } else {
+                setData([]);
+              }
+              resolve();
+            },
+            (error: any) => {
+              console.error('Failed to retrieve data: ', error);
+              reject(error);
+            },
+          );
+        });
+      });
+    } catch (error) {
+      console.error('Failed to retrieve data: ', error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, []),
+  );
+
+  const screenWidth = Dimensions.get('window').width - 30;
+
+  const chartConfig = {
+    backgroundGradientFrom: '#ffffff',
+    backgroundGradientTo: '#ffffff',
+    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    strokeWidth: 3,
+    barPercentage: 0.5,
+    yAxisLabel: '',
+    yAxisSuffix: '',
+    minValue: 0,
+  };
+
+  const chartData = {
+    labels: data.map(item => item.date.toString()),
+    datasets: [
+      {
+        data: data.map(item => item.sumdaily),
+      },
+    ],
+  };
+
   return (
     <View>
-      <Text>รายงานน้ำดื่ม</Text>
-      <Text>เฉลี่ยรายสัปดาห์</Text>
+      <Text>Statistics</Text>
+      <View style={{margin: 10}}>
+        <BarChart
+          data={chartData}
+          width={screenWidth}
+          height={200}
+          chartConfig={chartConfig}
+          verticalLabelRotation={0}
+          yAxisLabel=""
+          yAxisSuffix=""
+        />
+      </View>
     </View>
   );
 };
