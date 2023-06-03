@@ -1,20 +1,27 @@
 import React, {useEffect, useState} from 'react';
-import {Pressable, ScrollView, StyleSheet, View} from 'react-native';
-import {Button, Text} from 'react-native-paper';
+import {Modal, Pressable, ScrollView, StyleSheet, View} from 'react-native';
+import {Button, PaperProvider, Portal, Text} from 'react-native-paper';
 import CardTime from '../components/CardTime';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 import {openDatabase, createTable} from '../utils/db';
 import CardCapacity from '../components/CardCapacity';
+import {SCREEN_NAME} from '../constants/screensNames';
+import SetVolumeModal from '../components/SetVolumeModal';
+
 const db = openDatabase();
 createTable(db); // create table in first time
 
-const Home = (props: any) => {
+const Home = ({navigation}: any, props: any) => {
   const getCurrentDate = () => {
     const date = new Date();
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  };
+
+  const setGoalPage = () => {
+    navigation.navigate(SCREEN_NAME.SET_GOAL_PAGE);
   };
 
   const [currentDate, setCurrentDate] = useState(getCurrentDate());
@@ -146,37 +153,38 @@ const Home = (props: any) => {
     }
   };
   return (
-    <View style={styles.container}>
-      <CardCapacity currentAmount={amount || 0} goalAmount={maxAmount} />
-      <ScrollView>
-        <View style={styles.center}>
-          <Pressable onPress={handleDrinkPress}>
-            <AnimatedProgressWheel
-              progress={percentFilled}
-              animateFromValue={0}
-              duration={2000}
-              color={'#69b4ff'}
-              fullColor={'#0085ff'}
-              backgroundColor={'white'}
-            />
-          </Pressable>
-          <Button mode={'contained'} onPress={resetButton}>
-            RESET
-          </Button>
-        </View>
-        {items.length > 0 ? (
-          items.map((item: any, index: number) => (
-            <CardTime
-              key={item.id}
-              value={item}
-              onDelete={handleDelete} // Pass the handleDelete function
-            />
-          ))
-        ) : (
-          <Text>Hello</Text>
-        )}
-      </ScrollView>
-    </View>
+    <>
+      <View style={styles.container}>
+        <Pressable onPress={setGoalPage}>
+          <CardCapacity currentAmount={amount || 0} goalAmount={maxAmount} />
+        </Pressable>
+        <ScrollView>
+          <View style={styles.center}>
+            <Pressable onPress={handleDrinkPress}>
+              <AnimatedProgressWheel
+                progress={percentFilled}
+                animateFromValue={0}
+                duration={2000}
+                color={'#69b4ff'}
+                fullColor={'#0085ff'}
+                backgroundColor={'white'}
+              />
+            </Pressable>
+          </View>
+          {items.length > 0 ? (
+            items.map((item: any, index: number) => (
+              <CardTime
+                key={item.id}
+                value={item}
+                onDelete={handleDelete} // Pass the handleDelete function
+              />
+            ))
+          ) : (
+            <Text>Hello</Text>
+          )}
+        </ScrollView>
+      </View>
+    </>
   );
 };
 
@@ -192,5 +200,9 @@ const styles = StyleSheet.create({
   },
   circleText: {
     fontSize: 18,
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 20,
   },
 });

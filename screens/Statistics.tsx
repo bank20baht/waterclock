@@ -26,8 +26,8 @@ const Statistics = (props: Props) => {
           sevenDaysAgo.setDate(currentDate.getDate() - 7);
 
           tx.executeSql(
-            `SELECT date, SUM(amount) as sumdaily FROM watertrack WHERE date >= ? AND date <= ? GROUP BY date ORDER BY date DESC`,
-            [sevenDaysAgo.toISOString(), currentDate.toISOString()],
+            `SELECT date, SUM(amount) as sumdaily FROM watertrack GROUP BY date ORDER BY date ASC LIMIT 7`,
+            [],
             (_: any, {rows}: any) => {
               console.log('Data received (SUM amount) successfully');
               if (rows.length > 0) {
@@ -60,16 +60,20 @@ const Statistics = (props: Props) => {
   const chartConfig = {
     backgroundGradientFrom: '#ffffff',
     backgroundGradientTo: '#ffffff',
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
     strokeWidth: 3,
-    barPercentage: 1,
+    barPercentage: 0.3,
     yAxisLabel: '',
     yAxisSuffix: '',
-    minValue: 0,
   };
 
   const chartData = {
-    labels: data.map(item => item.date.toString()),
+    labels: data.map(item => {
+      const weekday = new Date(item.date).toLocaleDateString('en-US', {
+        weekday: 'short',
+      });
+      return weekday.slice(0, weekday.indexOf(','));
+    }),
     datasets: [
       {
         data: data.map(item => item.sumdaily),
@@ -79,8 +83,8 @@ const Statistics = (props: Props) => {
 
   return (
     <View>
-      <Text>Statistics</Text>
       <View style={{margin: 10}}>
+        <Text>7 วันที่ผ่านมา</Text>
         <BarChart
           data={chartData}
           width={screenWidth}
@@ -89,8 +93,15 @@ const Statistics = (props: Props) => {
           verticalLabelRotation={0}
           yAxisLabel=""
           yAxisSuffix=""
+          fromZero={true}
         />
       </View>
+      <Card style={{margin: 10}}>
+        <Card.Content>
+          <Text>เฉลี่ยการดื่มน้ำรายอาทิตย์</Text>
+          <Text>คุณดื่มน้ำถี่เเค่ไหน</Text>
+        </Card.Content>
+      </Card>
     </View>
   );
 };

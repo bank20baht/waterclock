@@ -9,6 +9,7 @@ import {SCREEN_NAME} from './constants/screensNames';
 import Home from './screens/Home';
 import Statistics from './screens/Statistics';
 import Setting from './screens/Setting';
+import SetGoalPage from './screens/SetGoalPage';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -64,6 +65,11 @@ const App = (props: Props) => {
           name="Tabs"
           component={TabScreens}
           options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name={SCREEN_NAME.SET_GOAL_PAGE}
+          component={SetGoalPage}
+          options={{title: 'Goal'}}
         />
       </Stack.Navigator>
     </NavigationContainer>
