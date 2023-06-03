@@ -62,7 +62,7 @@ const Statistics = (props: Props) => {
     backgroundGradientTo: '#ffffff',
     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     strokeWidth: 3,
-    barPercentage: 0.5,
+    barPercentage: 1,
     yAxisLabel: '',
     yAxisSuffix: '',
     minValue: 0,
