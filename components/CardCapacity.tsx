@@ -12,7 +12,7 @@ const CardCapacity = (props: Props) => {
       <Card>
         <Card.Content style={{margin: 10}}>
           <Text variant="headlineLarge" style={{textAlign: 'center'}}>
-            {props.currentAmount} / {props.goalAmount}
+            {props.currentAmount} / {props.goalAmount} ml.
           </Text>
         </Card.Content>
       </Card>

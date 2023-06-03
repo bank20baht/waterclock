@@ -121,6 +121,30 @@ const Home = (props: any) => {
   }, [amount]);
 
   const percentFilled = (amount / maxAmount) * 100;
+
+  const handleDelete = async (id: number) => {
+    try {
+      await new Promise((resolve, reject) => {
+        db.transaction((tx: any) => {
+          tx.executeSql(
+            `DELETE FROM watertrack WHERE id = ?`,
+            [id],
+            (_: any, result: any) => {
+              console.log('Data deleted successfully');
+              resolve(result);
+            },
+            (error: any) => {
+              console.error('Failed to delete data: ', error);
+              reject(error);
+            },
+          );
+        });
+      });
+      fetchData();
+    } catch (error) {
+      console.error('Failed to delete data: ', error);
+    }
+  };
   return (
     <View style={styles.container}>
       <CardCapacity currentAmount={amount || 0} goalAmount={maxAmount} />
@@ -142,7 +166,11 @@ const Home = (props: any) => {
         </View>
         {items.length > 0 ? (
           items.map((item: any, index: number) => (
-            <CardTime key={item.id} value={item} />
+            <CardTime
+              key={item.id}
+              value={item}
+              onDelete={handleDelete} // Pass the handleDelete function
+            />
           ))
         ) : (
           <Text>Hello</Text>
