@@ -1,33 +1,49 @@
-import {StyleSheet, View} from 'react-native';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import React, {useState} from 'react';
-import {Modal, Portal, Text, Button, PaperProvider} from 'react-native-paper';
+import {
+  Modal,
+  Portal,
+  Text,
+  Button,
+  PaperProvider,
+  SegmentedButtons,
+  Dialog,
+} from 'react-native-paper';
 
 type Props = {};
 
 const SetGoalPage = (props: Props) => {
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = React.useState(false);
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-  const containerStyle = {backgroundColor: 'white', padding: 20};
+  const showDialog = () => setVisible(true);
+
+  const hideDialog = () => setVisible(false);
 
   return (
     <PaperProvider>
-      <Portal>
-        <Modal
-          visible={visible}
-          onDismiss={hideModal}
-          contentContainerStyle={containerStyle}>
-          <Text>Example Modal. Click outside this area to dismiss.</Text>
-        </Modal>
-      </Portal>
-      <Button style={{marginTop: 30}} mode={'contained'} onPress={showModal}>
-        Show
-      </Button>
+      <View>
+        <Button onPress={showDialog}>Show Dialog</Button>
+        <Portal>
+          <Dialog visible={visible} onDismiss={hideDialog}>
+            <Dialog.Title>Alert</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">This is simple dialog</Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideDialog}>Done</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      </View>
     </PaperProvider>
   );
 };
 
 export default SetGoalPage;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+  },
+});

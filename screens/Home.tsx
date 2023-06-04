@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, Pressable, ScrollView, StyleSheet, View} from 'react-native';
-import {Button, PaperProvider, Portal, Text} from 'react-native-paper';
+import {Button, Dialog, PaperProvider, Portal, Text} from 'react-native-paper';
 import CardTime from '../components/CardTime';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
 import {openDatabase, createTable} from '../utils/db';
 import CardCapacity from '../components/CardCapacity';
 import {SCREEN_NAME} from '../constants/screensNames';
 import SetVolumeModal from '../components/SetVolumeModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useFocusEffect} from '@react-navigation/native';
 
 const db = openDatabase();
 createTable(db); // create table in first time
@@ -29,20 +31,28 @@ const Home = ({navigation}: any, props: any) => {
   const [amount, setAmount] = useState<number>(0);
   const [items, setItems] = useState<any>([]);
   const maxAmount = 3000;
+  const [visible, setVisible] = React.useState(false);
+  const [glassSize, setGlassSize] = useState(0);
+
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => {
+    setVisible(false);
+    getStoredValue();
+  };
 
   const handleDrinkPress = async () => {
-    const newAmount = 300; // Get the updated amount after incrementing
+    // Get the updated amount after incrementing
     const currentTime = new Date().toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
     });
-    const newAmount_display = newAmount + amount;
+    const newAmount_display = glassSize + amount;
     try {
       await new Promise((resolve, reject) => {
         db.transaction((tx: any) => {
           tx.executeSql(
             `INSERT INTO watertrack (amount, date, status, time) VALUES (?,?,?,?)`,
-            [newAmount, currentDate, status, currentTime],
+            [glassSize, currentDate, status, currentTime],
             (_: any, result: any) => {
               console.log('Data inserted successfully');
               setAmount(newAmount_display); // Update the amount state with the new amount
@@ -121,12 +131,27 @@ const Home = ({navigation}: any, props: any) => {
       console.error('An error occurred:', error);
     }
   };
+  const getStoredValue = async () => {
+    try {
+      const value = await AsyncStorage.getItem('glassSize');
+      if (value !== null) {
+        setGlassSize(JSON.parse(value));
+      }
+    } catch (error) {
+      console.log('Error retrieving stored value:', error);
+    }
+  };
 
   useEffect(() => {
     console.log(`Amount changed: ${amount}`);
     fetchData();
   }, [amount]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      getStoredValue();
+    }, []),
+  );
   const percentFilled = (amount / maxAmount) * 100;
 
   const handleDelete = async (id: number) => {
@@ -152,39 +177,56 @@ const Home = ({navigation}: any, props: any) => {
       console.error('Failed to delete data: ', error);
     }
   };
+
   return (
-    <>
-      <View style={styles.container}>
-        <Pressable onPress={setGoalPage}>
-          <CardCapacity currentAmount={amount || 0} goalAmount={maxAmount} />
-        </Pressable>
-        <ScrollView>
-          <View style={styles.center}>
-            <Pressable onPress={handleDrinkPress}>
-              <AnimatedProgressWheel
-                progress={percentFilled}
-                animateFromValue={0}
-                duration={2000}
-                color={'#69b4ff'}
-                fullColor={'#0085ff'}
-                backgroundColor={'white'}
-              />
-            </Pressable>
-          </View>
-          {items.length > 0 ? (
-            items.map((item: any, index: number) => (
-              <CardTime
-                key={item.id}
-                value={item}
-                onDelete={handleDelete} // Pass the handleDelete function
-              />
-            ))
-          ) : (
-            <Text>Hello</Text>
-          )}
-        </ScrollView>
-      </View>
-    </>
+    <PaperProvider>
+      <>
+        <View style={styles.container}>
+          <Pressable onPress={setGoalPage}>
+            <CardCapacity currentAmount={amount || 0} goalAmount={maxAmount} />
+          </Pressable>
+          <ScrollView>
+            <View style={styles.center}>
+              <Pressable onPress={handleDrinkPress}>
+                <AnimatedProgressWheel
+                  progress={percentFilled}
+                  animateFromValue={0}
+                  duration={2000}
+                  color={'#69b4ff'}
+                  fullColor={'#0085ff'}
+                  backgroundColor={'white'}
+                />
+              </Pressable>
+              <Button onPress={showDialog} mode={'contained'}>
+                {glassSize} ml.
+              </Button>
+            </View>
+            {items.length > 0 ? (
+              items.map((item: any, index: number) => (
+                <CardTime
+                  key={item.id}
+                  value={item}
+                  onDelete={handleDelete} // Pass the handleDelete function
+                />
+              ))
+            ) : (
+              <Text>Hello</Text>
+            )}
+          </ScrollView>
+        </View>
+        <Portal>
+          <Dialog visible={visible} onDismiss={hideDialog}>
+            <Dialog.Title>Glass Size</Dialog.Title>
+            <Dialog.Content>
+              <SetVolumeModal />
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideDialog}>Cancel</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      </>
+    </PaperProvider>
   );
 };
 

@@ -1,31 +1,125 @@
-import {StyleSheet, View} from 'react-native';
-import React, {useState} from 'react';
-import {Modal, Portal, Text, Button, PaperProvider} from 'react-native-paper';
+import {Pressable, StyleSheet, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  Modal,
+  Portal,
+  Text,
+  Button,
+  PaperProvider,
+  Dialog,
+} from 'react-native-paper';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = {};
 
 const SetVolumeModal = (props: Props) => {
-  const [visible, setVisible] = useState(false);
+  const [glassSize, setGlassSize] = useState<number>(0);
+  console.log(glassSize);
 
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-  const containerStyle = {backgroundColor: 'white', padding: 20};
+  const getStoredValue = async () => {
+    try {
+      const value = await AsyncStorage.getItem('glassSize');
+      if (value !== null) {
+        setGlassSize(JSON.parse(value));
+      }
+    } catch (error) {
+      console.log('Error retrieving stored value:', error);
+    }
+  };
 
+  useEffect(() => {
+    getStoredValue();
+  }, []);
+
+  useEffect(() => {
+    // Save the glassSize to AsyncStorage whenever it changes
+    AsyncStorage.setItem('glassSize', JSON.stringify(glassSize)).catch(
+      error => {
+        console.log('Error saving glassSize to AsyncStorage:', error);
+      },
+    );
+  }, [glassSize]);
   return (
-    <PaperProvider>
-      <Portal>
-        <Modal
-          style={{flex: 1}}
-          visible={visible}
-          onDismiss={hideModal}
-          contentContainerStyle={containerStyle}>
-          <Text>Example Modal. Click outside this area to dismiss.</Text>
-        </Modal>
-      </Portal>
-      <Button style={{marginTop: 30}} mode={'contained'} onPress={showModal}>
-        Show
-      </Button>
-    </PaperProvider>
+    <View>
+      <View>
+        <Text style={{textAlign: 'center'}}>current size: {glassSize}</Text>
+      </View>
+      <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+        <Pressable
+          onPress={() => {
+            setGlassSize(100);
+          }}>
+          <View
+            style={{
+              flexDirection: 'column',
+              padding: 5,
+              justifyContent: 'center',
+            }}>
+            <MaterialCommunityIcons name={'glass-cocktail'} size={50} />
+            <Text>100 ml</Text>
+          </View>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setGlassSize(150);
+          }}>
+          <View
+            style={{
+              flexDirection: 'column',
+              padding: 5,
+              justifyContent: 'center',
+            }}>
+            <MaterialCommunityIcons name={'glass-flute'} size={50} />
+            <Text>150 ml</Text>
+          </View>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setGlassSize(200);
+          }}>
+          <View
+            style={{
+              flexDirection: 'column',
+              padding: 5,
+              justifyContent: 'center',
+            }}>
+            <MaterialCommunityIcons name={'glass-wine'} size={50} />
+            <Text>200 ml</Text>
+          </View>
+        </Pressable>
+      </View>
+      <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+        <Pressable
+          onPress={() => {
+            setGlassSize(300);
+          }}>
+          <View
+            style={{
+              flexDirection: 'column',
+              padding: 5,
+              justifyContent: 'center',
+            }}>
+            <MaterialCommunityIcons name={'glass-pint-outline'} size={50} />
+            <Text>300 ml</Text>
+          </View>
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            setGlassSize(400);
+          }}>
+          <View
+            style={{
+              flexDirection: 'column',
+              padding: 5,
+              justifyContent: 'center',
+            }}>
+            <MaterialCommunityIcons name={'glass-mug'} size={50} />
+            <Text>400 ml</Text>
+          </View>
+        </Pressable>
+      </View>
+    </View>
   );
 };
 

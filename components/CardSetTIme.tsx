@@ -1,17 +1,23 @@
 import {StyleSheet, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Card, Switch, Text} from 'react-native-paper';
 import {Pressable} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 type Props = {
   date: Date;
   switchOn: boolean;
 };
 
-const CardSetTIme = (props: Props) => {
+const CardSetTime = (props: Props) => {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [selectedTime, setSelectedTime] = useState(new Date(props.date));
   const [isSwitchOn, setIsSwitchOn] = useState(props.switchOn);
+
+  useEffect(() => {
+    saveSwitchState();
+  }, [isSwitchOn]);
 
   const formatTime = (date: Date) => {
     const formatted = date.toLocaleTimeString([], {
@@ -37,6 +43,25 @@ const CardSetTIme = (props: Props) => {
   const onToggleSwitch = () => {
     setIsSwitchOn(!isSwitchOn);
   };
+
+  const saveSwitchState = async () => {
+    try {
+      const storedValue = await AsyncStorage.getItem('timeData');
+      if (storedValue) {
+        const parsedData = JSON.parse(storedValue);
+        const updatedData = parsedData.map((item: any) => {
+          if (item.date === props.date) {
+            return {...item, switchOn: isSwitchOn};
+          }
+          return item;
+        });
+        await AsyncStorage.setItem('timeData', JSON.stringify(updatedData));
+      }
+    } catch (error) {
+      console.log('Error saving switch state:', error);
+    }
+  };
+
   return (
     <View>
       <Card style={styles.cardContainer}>
@@ -59,7 +84,7 @@ const CardSetTIme = (props: Props) => {
   );
 };
 
-export default CardSetTIme;
+export default CardSetTime;
 
 const styles = StyleSheet.create({
   container: {
