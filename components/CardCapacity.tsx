@@ -9,9 +9,16 @@ type Props = {
 const CardCapacity = (props: Props) => {
   return (
     <View style={{margin: 5, padding: 5}}>
-      <Card>
+      <Card
+        style={{
+          backgroundColor: '#0085ff',
+          borderWidth: 2,
+          borderColor: '#004E86',
+        }}>
         <Card.Content style={{margin: 10}}>
-          <Text variant="headlineLarge" style={{textAlign: 'center'}}>
+          <Text
+            variant="headlineLarge"
+            style={{textAlign: 'center', color: '#e0ffff'}}>
             {props.currentAmount} / {props.goalAmount} ml.
           </Text>
         </Card.Content>

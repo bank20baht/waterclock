@@ -15,15 +15,22 @@ const CardTime = (props: Props) => {
   };
 
   return (
-    <Card style={{marginVertical: 5}}>
+    <Card style={{marginVertical: 5, backgroundColor: '#2d2d2d'}}>
       <Card.Content
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}>
-        <Text variant="titleLarge">{time}</Text>
-        <Text variant="bodyMedium">{amount} ml</Text>
+        <View>
+          <Text variant="titleLarge" style={{color: '#FFFFFF'}}>
+            {time}
+          </Text>
+          <Text variant="bodyMedium" style={{color: '#9e9e9e'}}>
+            {amount} ml
+          </Text>
+        </View>
+
         <IconButton icon="delete" size={20} onPress={handleDelete} />
       </Card.Content>
     </Card>

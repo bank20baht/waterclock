@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View} from 'react-native';
+import {StatusBar, View} from 'react-native';
 import {TextInput, Text, Card} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -45,9 +45,12 @@ const SetGoalPage = () => {
   };
 
   return (
-    <View>
-      <Card style={{margin: 5}}>
-        <Text variant={'headlineSmall'} style={{textAlign: 'center'}}>
+    <View style={{backgroundColor: '#1e1e1e', flex: 1}}>
+      <StatusBar barStyle="light-content" backgroundColor="#0085ff" />
+      <Card style={{margin: 5, backgroundColor: '#2d2d2d'}}>
+        <Text
+          variant={'headlineSmall'}
+          style={{textAlign: 'center', color: 'white'}}>
           กรอกน้ำหนักของคุณ
         </Text>
         <TextInput
@@ -56,10 +59,14 @@ const SetGoalPage = () => {
           onChangeText={handleWeightChange}
           onEndEditing={calculateWaterVolume}
         />
-        <Text variant={'headlineSmall'} style={{textAlign: 'center'}}>
+        <Text
+          variant={'headlineSmall'}
+          style={{textAlign: 'center', color: 'white'}}>
           ปริมาณที่เเนะนำ
         </Text>
-        <Text variant={'headlineLarge'} style={{textAlign: 'center'}}>
+        <Text
+          variant={'headlineLarge'}
+          style={{textAlign: 'center', color: 'white'}}>
           {goal} ml.
         </Text>
       </Card>

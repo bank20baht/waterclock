@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, StatusBar, StyleSheet, Text, View} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {openDatabase} from '../utils/db';
 import {BarChart} from 'react-native-chart-kit';
@@ -82,7 +82,8 @@ const Statistics = (props: Props) => {
   };
 
   return (
-    <View>
+    <View style={{backgroundColor: '#1e1e1e', flex: 1}}>
+      <StatusBar barStyle="light-content" backgroundColor="#0085ff" />
       <View style={{margin: 10}}>
         <Text>7 วันที่ผ่านมา</Text>
         <BarChart
@@ -96,10 +97,10 @@ const Statistics = (props: Props) => {
           fromZero={true}
         />
       </View>
-      <Card style={{margin: 10}}>
+      <Card style={{margin: 10, backgroundColor: '#2d2d2d'}}>
         <Card.Content>
-          <Text>เฉลี่ยการดื่มน้ำรายอาทิตย์</Text>
-          <Text>คุณดื่มน้ำถี่เเค่ไหน</Text>
+          <Text style={{color: 'white'}}>เฉลี่ยการดื่มน้ำรายอาทิตย์</Text>
+          <Text style={{color: 'white'}}>คุณดื่มน้ำถี่เเค่ไหน</Text>
         </Card.Content>
       </Card>
     </View>

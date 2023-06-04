@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Modal, Pressable, ScrollView, StyleSheet, View} from 'react-native';
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native';
 import {Button, Dialog, PaperProvider, Portal, Text} from 'react-native-paper';
 import CardTime from '../components/CardTime';
 import AnimatedProgressWheel from 'react-native-progress-wheel';
@@ -30,7 +37,7 @@ const Home = ({navigation}: any, props: any) => {
   const [status, setStatus] = useState(false);
   const [amount, setAmount] = useState<number>(0);
   const [items, setItems] = useState<any>([]);
-  const [goal, setGoal] = useState<number>(0);
+  const [goal, setGoal] = useState<number>(1500);
   const maxAmount = goal;
   const [visible, setVisible] = React.useState(false);
   const [glassSize, setGlassSize] = useState(0);
@@ -137,17 +144,18 @@ const Home = ({navigation}: any, props: any) => {
     }
   };
 
+  useFocusEffect(
+    React.useCallback(() => {
+      getStoredValueGlassSize();
+      getStoredGoalValue();
+    }, [glassSize, goal]),
+  );
+
   useEffect(() => {
     console.log(`Amount changed: ${amount}`);
     fetchData();
   }, [amount]);
 
-  useFocusEffect(
-    React.useCallback(() => {
-      getStoredValueGlassSize();
-      getStoredGoalValue();
-    }, []),
-  );
   const percentFilled = (amount / maxAmount) * 100;
 
   const handleDelete = async (id: number) => {
@@ -177,6 +185,7 @@ const Home = ({navigation}: any, props: any) => {
   return (
     <PaperProvider>
       <>
+        <StatusBar barStyle="light-content" backgroundColor="#0085ff" />
         <View style={styles.container}>
           <Pressable onPress={setGoalPage}>
             <CardCapacity currentAmount={amount || 0} goalAmount={maxAmount} />
@@ -184,14 +193,7 @@ const Home = ({navigation}: any, props: any) => {
           <ScrollView>
             <View style={styles.center}>
               <Pressable onPress={handleDrinkPress}>
-                <AnimatedProgressWheel
-                  progress={percentFilled}
-                  animateFromValue={0}
-                  duration={2000}
-                  color={'#69b4ff'}
-                  fullColor={'#0085ff'}
-                  backgroundColor={'white'}
-                />
+                <Button>Click this to increases amount (temporary)</Button>
               </Pressable>
               <View style={{margin: 5}}>
                 <Button onPress={showDialog} mode={'contained'}>
@@ -234,6 +236,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: '#1e1e1e',
   },
   center: {
     alignItems: 'center',

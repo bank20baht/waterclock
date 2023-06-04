@@ -10,43 +10,83 @@ import Home from './screens/Home';
 import Statistics from './screens/Statistics';
 import Setting from './screens/Setting';
 import SetGoalPage from './screens/SetGoalPage';
-
+import {useTheme} from '@react-navigation/native';
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 type Props = {};
+const TabScreens = () => {
+  const {colors} = useTheme();
 
-const TabScreens = (prop: any) => {
   return (
-    <Tab.Navigator initialRouteName={SCREEN_NAME.HOME_PAGE}>
+    <Tab.Navigator
+      initialRouteName="Home"
+      screenOptions={({route}) => ({
+        tabBarIcon: ({color, size}) => {
+          let iconName;
+
+          if (route.name === 'Home') {
+            iconName = 'home';
+          } else if (route.name === 'Statistics') {
+            iconName = 'areachart';
+          } else if (route.name === 'Setting') {
+            iconName = 'tool';
+          }
+          if (!iconName) {
+            return null; // or provide a fallback icon or handle the error accordingly
+          }
+
+          return <AntDesign name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: '#e0ffff', // Change the active tab color
+        tabBarInactiveTintColor: 'black', // Change the inactive tab color
+        tabBarStyle: {
+          backgroundColor: '#0085ff', // Change the background color of the tab bar
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+        },
+      })}>
       <Tab.Screen
-        name={SCREEN_NAME.HOME_PAGE}
+        name="Home"
         component={Home}
         options={{
           title: 'Home',
-          tabBarIcon: () => {
-            return <AntDesign name="home" size={20} />;
+          headerTitleStyle: {
+            color: '#e0ffff',
           },
+          headerStyle: {
+            backgroundColor: '#0085ff',
+          },
+          headerTitleAlign: 'center',
         }}
       />
       <Tab.Screen
-        name={SCREEN_NAME.STAT_PAGE}
+        name="Statistics"
         component={Statistics}
         options={{
           title: 'Statistics',
-          tabBarIcon: () => {
-            return <AntDesign name="areachart" size={20} />;
+          headerTitleStyle: {
+            color: '#e0ffff',
           },
+          headerStyle: {
+            backgroundColor: '#0085ff',
+          },
+          headerTitleAlign: 'center',
         }}
       />
       <Tab.Screen
-        name={SCREEN_NAME.SETTING_PAGE}
+        name="Setting"
         component={Setting}
         options={{
           title: 'Setting',
-          tabBarIcon: () => {
-            return <AntDesign name="tool" size={20} />;
+          headerTitleStyle: {
+            color: '#e0ffff',
           },
+          headerStyle: {
+            backgroundColor: '#0085ff',
+          },
+          headerTitleAlign: 'center',
         }}
       />
     </Tab.Navigator>
@@ -69,7 +109,16 @@ const App = (props: Props) => {
         <Stack.Screen
           name={SCREEN_NAME.SET_GOAL_PAGE}
           component={SetGoalPage}
-          options={{title: 'Goal'}}
+          options={{
+            title: 'Goal',
+            headerTitleStyle: {
+              color: '#6EC3FF',
+            },
+            headerStyle: {
+              backgroundColor: '#0085ff',
+            },
+            headerTitleAlign: 'center',
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -77,5 +126,3 @@ const App = (props: Props) => {
 };
 
 export default App;
-
-const styles = StyleSheet.create({});
