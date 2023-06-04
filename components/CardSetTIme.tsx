@@ -67,7 +67,9 @@ const CardSetTime = (props: Props) => {
       <Card style={styles.cardContainer}>
         <View style={styles.rowContainer}>
           <Pressable onPress={showTimePickerModal}>
-            <Text variant="headlineLarge">{formatTime(selectedTime)}</Text>
+            <Text variant="headlineLarge" style={{color: 'white'}}>
+              {formatTime(selectedTime)}
+            </Text>
           </Pressable>
           <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
         </View>
@@ -95,6 +97,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 10,
     margin: 10,
+    backgroundColor: '#2d2d2d',
   },
   rowContainer: {
     flexDirection: 'row',

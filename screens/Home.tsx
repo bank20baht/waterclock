@@ -41,7 +41,7 @@ const Home = ({navigation}: any, props: any) => {
   const maxAmount = goal;
   const [visible, setVisible] = React.useState(false);
   const [glassSize, setGlassSize] = useState(0);
-
+  const [percentFilled, setPercentFilled] = useState(0);
   const showDialog = () => setVisible(true);
   const hideDialog = () => {
     setVisible(false);
@@ -156,7 +156,13 @@ const Home = ({navigation}: any, props: any) => {
     fetchData();
   }, [amount]);
 
-  const percentFilled = (amount / maxAmount) * 100;
+  useEffect(() => {
+    // Delay the calculation and update the percent filled state
+    const percent = (amount / maxAmount) * 100;
+    setPercentFilled(percent);
+  }, [amount, maxAmount]);
+
+  //const percentFilled = (amount / maxAmount) * 100;
 
   const handleDelete = async (id: number) => {
     try {
@@ -193,7 +199,14 @@ const Home = ({navigation}: any, props: any) => {
           <ScrollView>
             <View style={styles.center}>
               <Pressable onPress={handleDrinkPress}>
-                <Button>Click this to increases amount (temporary)</Button>
+                <AnimatedProgressWheel
+                  progress={percentFilled}
+                  animateFromValue={0}
+                  duration={2000}
+                  color={'#69b4ff'}
+                  fullColor={'#0085ff'}
+                  backgroundColor={'white'}
+                />
               </Pressable>
               <View style={{margin: 5}}>
                 <Button onPress={showDialog} mode={'contained'}>
