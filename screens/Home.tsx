@@ -30,14 +30,15 @@ const Home = ({navigation}: any, props: any) => {
   const [status, setStatus] = useState(false);
   const [amount, setAmount] = useState<number>(0);
   const [items, setItems] = useState<any>([]);
-  const maxAmount = 3000;
+  const [goal, setGoal] = useState<number>(0);
+  const maxAmount = goal;
   const [visible, setVisible] = React.useState(false);
   const [glassSize, setGlassSize] = useState(0);
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => {
     setVisible(false);
-    getStoredValue();
+    getStoredValueGlassSize();
   };
 
   const handleDrinkPress = async () => {
@@ -68,22 +69,6 @@ const Home = ({navigation}: any, props: any) => {
     } catch (error) {
       console.error('Failed to insert data: ', error);
     }
-  };
-
-  const resetButton = () => {
-    db.transaction((tx: any) => {
-      tx.executeSql(
-        `DELETE FROM watertrack WHERE date = ?`,
-        [currentDate],
-        (_: any, result: any) => {
-          console.log('Data deleted successfully');
-          setAmount(0); // Update the amount state to 0
-        },
-        (error: any) => {
-          console.error('Failed to delete data: ', error);
-        },
-      );
-    });
   };
 
   const fetchData = async () => {
@@ -131,11 +116,21 @@ const Home = ({navigation}: any, props: any) => {
       console.error('An error occurred:', error);
     }
   };
-  const getStoredValue = async () => {
+  const getStoredValueGlassSize = async () => {
     try {
       const value = await AsyncStorage.getItem('glassSize');
       if (value !== null) {
         setGlassSize(JSON.parse(value));
+      }
+    } catch (error) {
+      console.log('Error retrieving stored value:', error);
+    }
+  };
+  const getStoredGoalValue = async () => {
+    try {
+      const value = await AsyncStorage.getItem('goal');
+      if (value !== null) {
+        setGoal(parseInt(value));
       }
     } catch (error) {
       console.log('Error retrieving stored value:', error);
@@ -149,7 +144,8 @@ const Home = ({navigation}: any, props: any) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      getStoredValue();
+      getStoredValueGlassSize();
+      getStoredGoalValue();
     }, []),
   );
   const percentFilled = (amount / maxAmount) * 100;
@@ -197,9 +193,11 @@ const Home = ({navigation}: any, props: any) => {
                   backgroundColor={'white'}
                 />
               </Pressable>
-              <Button onPress={showDialog} mode={'contained'}>
-                {glassSize} ml.
-              </Button>
+              <View style={{margin: 5}}>
+                <Button onPress={showDialog} mode={'contained'}>
+                  {glassSize} ml.
+                </Button>
+              </View>
             </View>
             {items.length > 0 ? (
               items.map((item: any, index: number) => (
