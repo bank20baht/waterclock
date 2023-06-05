@@ -1,12 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {StatusBar, View} from 'react-native';
-import {TextInput, Text, Card} from 'react-native-paper';
+import {TextInput, Text, Card, Button} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import CircularProgress, {
+  ProgressRef,
+} from 'react-native-circular-progress-indicator';
+import AnimateNumber from 'react-native-animate-number';
 const SetGoalPage = () => {
   const [weight, setWeight] = useState('0');
   const [goal, setGoal] = useState<number>(0);
-  console.log(weight);
 
   const calculateWaterVolume = () => {
     let result = (parseFloat(weight) * 2.2 * 30) / 2;

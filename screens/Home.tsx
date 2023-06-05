@@ -194,26 +194,29 @@ const Home = ({navigation}: any, props: any) => {
         <StatusBar barStyle="light-content" backgroundColor="#0085ff" />
         <View style={styles.container}>
           <Pressable onPress={setGoalPage}>
-            <CardCapacity currentAmount={amount || 0} goalAmount={maxAmount} />
+            <CardCapacity
+              currentAmount={amount || 0}
+              goalAmount={maxAmount}
+              onDrinkPress={handleDrinkPress}
+            />
           </Pressable>
+          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <Button
+              style={{backgroundColor: '#0085ff'}}
+              mode={'contained'}
+              onPress={handleDrinkPress}>
+              กดเมื่อดื่ม
+            </Button>
+            <Button
+              style={{backgroundColor: '#0085ff', marginLeft: 5}}
+              onPress={showDialog}
+              mode={'contained'}
+              icon={'refresh'}>
+              {glassSize} ml.
+            </Button>
+          </View>
+          <Text style={{color: 'white'}}>รายการวันนี้</Text>
           <ScrollView>
-            <View style={styles.center}>
-              <Pressable onPress={handleDrinkPress}>
-                <AnimatedProgressWheel
-                  progress={percentFilled}
-                  animateFromValue={0}
-                  duration={2000}
-                  color={'#69b4ff'}
-                  fullColor={'#0085ff'}
-                  backgroundColor={'white'}
-                />
-              </Pressable>
-              <View style={{margin: 5}}>
-                <Button onPress={showDialog} mode={'contained'}>
-                  {glassSize} ml.
-                </Button>
-              </View>
-            </View>
             {items.length > 0 ? (
               items.map((item: any, index: number) => (
                 <CardTime
@@ -228,13 +231,18 @@ const Home = ({navigation}: any, props: any) => {
           </ScrollView>
         </View>
         <Portal>
-          <Dialog visible={visible} onDismiss={hideDialog}>
-            <Dialog.Title>Glass Size</Dialog.Title>
+          <Dialog
+            visible={visible}
+            onDismiss={hideDialog}
+            style={{backgroundColor: '#2d2d2d'}}>
+            <Dialog.Title style={{color: 'white'}}>Glass Size</Dialog.Title>
             <Dialog.Content>
               <SetVolumeModal />
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={hideDialog}>Cancel</Button>
+              <Button style={{backgroundColor: '#0085ff'}} onPress={hideDialog}>
+                <Text style={{color: 'white'}}>Cancel</Text>
+              </Button>
             </Dialog.Actions>
           </Dialog>
         </Portal>

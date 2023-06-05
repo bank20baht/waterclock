@@ -15,7 +15,13 @@ const CardTime = (props: Props) => {
   };
 
   return (
-    <Card style={{marginVertical: 5, backgroundColor: '#2d2d2d'}}>
+    <Card
+      style={{
+        marginVertical: 5,
+        backgroundColor: '#2d2d2d',
+        borderColor: '#363636',
+        borderWidth: 2,
+      }}>
       <Card.Content
         style={{
           flexDirection: 'row',

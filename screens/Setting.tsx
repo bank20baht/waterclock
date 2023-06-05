@@ -49,7 +49,11 @@ const Setting = () => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0085ff" />
       <View style={styles.buttonContainer}>
-        <Button mode={'contained'} onPress={saveTimeToDB}>
+        <Button
+          theme={{colors: {primary: '#0085ff', outline: '#0085ff'}}}
+          mode={'outlined'}
+          onPress={saveTimeToDB}
+          icon={'plus'}>
           Add
         </Button>
       </View>

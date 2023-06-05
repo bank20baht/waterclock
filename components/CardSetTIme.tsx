@@ -71,7 +71,11 @@ const CardSetTime = (props: Props) => {
               {formatTime(selectedTime)}
             </Text>
           </Pressable>
-          <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
+          <Switch
+            value={isSwitchOn}
+            onValueChange={onToggleSwitch}
+            color={'#0085ff'}
+          />
         </View>
       </Card>
       {showTimePicker && (
@@ -98,6 +102,8 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     backgroundColor: '#2d2d2d',
+    borderColor: '#363636',
+    borderWidth: 2,
   },
   rowContainer: {
     flexDirection: 'row',

@@ -1,8 +1,8 @@
-import {Dimensions, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {Dimensions, StatusBar, StyleSheet, View} from 'react-native';
 import React, {useState, useEffect} from 'react';
 import {openDatabase} from '../utils/db';
 import {BarChart} from 'react-native-chart-kit';
-import {Card} from 'react-native-paper';
+import {Card, Text} from 'react-native-paper';
 import {useFocusEffect} from '@react-navigation/native';
 
 const db = openDatabase();
@@ -55,7 +55,7 @@ const Statistics = (props: Props) => {
     }, []),
   );
 
-  const screenWidth = Dimensions.get('window').width - 30;
+  const screenWidth = Dimensions.get('window').width;
 
   const chartConfig = {
     backgroundGradientFrom: '#ffffff',
@@ -84,8 +84,10 @@ const Statistics = (props: Props) => {
   return (
     <View style={{backgroundColor: '#1e1e1e', flex: 1}}>
       <StatusBar barStyle="light-content" backgroundColor="#0085ff" />
-      <View style={{margin: 10}}>
-        <Text>7 วันที่ผ่านมา</Text>
+      <View style={{backgroundColor: '#363636'}}>
+        <Text style={{color: 'white', textAlign: 'center'}}>
+          7 วันที่ผ่านมา
+        </Text>
         <BarChart
           data={chartData}
           width={screenWidth}
@@ -98,9 +100,16 @@ const Statistics = (props: Props) => {
         />
       </View>
       <Card style={{margin: 10, backgroundColor: '#2d2d2d'}}>
+        <Text variant={'titleLarge'} style={{color: 'white', margin: 5}}>
+          รายงานการดื่มน้ำวันนี้
+        </Text>
         <Card.Content>
-          <Text style={{color: 'white'}}>เฉลี่ยการดื่มน้ำรายอาทิตย์</Text>
-          <Text style={{color: 'white'}}>คุณดื่มน้ำถี่เเค่ไหน</Text>
+          <Text variant={'titleMedium'} style={{color: 'white'}}>
+            เฉลี่ยการดื่มน้ำรายอาทิตย์
+          </Text>
+          <Text variant={'titleMedium'} style={{color: 'white'}}>
+            คุณดื่มน้ำถี่เเค่ไหน
+          </Text>
         </Card.Content>
       </Card>
     </View>

@@ -10,7 +10,7 @@ import {
 } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import AnimateNumber from 'react-native-animate-number';
 type Props = {};
 
 const SetVolumeModal = (props: Props) => {
@@ -43,7 +43,9 @@ const SetVolumeModal = (props: Props) => {
   return (
     <View>
       <View>
-        <Text style={{textAlign: 'center'}}>current size: {glassSize}</Text>
+        <Text style={{textAlign: 'center', color: 'white'}}>
+          current size: {glassSize}
+        </Text>
       </View>
       <View style={{flexDirection: 'row', justifyContent: 'center'}}>
         <Pressable
@@ -56,8 +58,12 @@ const SetVolumeModal = (props: Props) => {
               padding: 5,
               justifyContent: 'center',
             }}>
-            <MaterialCommunityIcons name={'glass-cocktail'} size={50} />
-            <Text>100 ml</Text>
+            <MaterialCommunityIcons
+              name={'glass-cocktail'}
+              size={50}
+              color={'white'}
+            />
+            <Text style={{color: 'white'}}>100 ml</Text>
           </View>
         </Pressable>
         <Pressable
@@ -70,8 +76,12 @@ const SetVolumeModal = (props: Props) => {
               padding: 5,
               justifyContent: 'center',
             }}>
-            <MaterialCommunityIcons name={'glass-flute'} size={50} />
-            <Text>150 ml</Text>
+            <MaterialCommunityIcons
+              name={'glass-flute'}
+              size={50}
+              color={'white'}
+            />
+            <Text style={{color: 'white'}}>150 ml</Text>
           </View>
         </Pressable>
         <Pressable
@@ -84,8 +94,12 @@ const SetVolumeModal = (props: Props) => {
               padding: 5,
               justifyContent: 'center',
             }}>
-            <MaterialCommunityIcons name={'glass-wine'} size={50} />
-            <Text>200 ml</Text>
+            <MaterialCommunityIcons
+              name={'glass-wine'}
+              size={50}
+              color={'white'}
+            />
+            <Text style={{color: 'white'}}>200 ml</Text>
           </View>
         </Pressable>
       </View>
@@ -100,8 +114,12 @@ const SetVolumeModal = (props: Props) => {
               padding: 5,
               justifyContent: 'center',
             }}>
-            <MaterialCommunityIcons name={'glass-pint-outline'} size={50} />
-            <Text>300 ml</Text>
+            <MaterialCommunityIcons
+              name={'glass-pint-outline'}
+              size={50}
+              color={'white'}
+            />
+            <Text style={{color: 'white'}}>300 ml</Text>
           </View>
         </Pressable>
         <Pressable
@@ -114,8 +132,12 @@ const SetVolumeModal = (props: Props) => {
               padding: 5,
               justifyContent: 'center',
             }}>
-            <MaterialCommunityIcons name={'glass-mug'} size={50} />
-            <Text>400 ml</Text>
+            <MaterialCommunityIcons
+              name={'glass-mug'}
+              size={50}
+              color={'white'}
+            />
+            <Text style={{color: 'white'}}>400 ml</Text>
           </View>
         </Pressable>
       </View>
