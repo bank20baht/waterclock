@@ -51,7 +51,7 @@ const Setting = () => {
       <View style={styles.buttonContainer}>
         <Button
           theme={{colors: {primary: '#0085ff', outline: '#0085ff'}}}
-          mode={'outlined'}
+          mode={'contained'}
           onPress={saveTimeToDB}
           icon={'plus'}>
           Add

@@ -41,7 +41,8 @@ const Home = ({navigation}: any, props: any) => {
   const maxAmount = goal;
   const [visible, setVisible] = React.useState(false);
   const [glassSize, setGlassSize] = useState(0);
-  const [percentFilled, setPercentFilled] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
   const showDialog = () => setVisible(true);
   const hideDialog = () => {
     setVisible(false);
@@ -50,11 +51,16 @@ const Home = ({navigation}: any, props: any) => {
 
   const handleDrinkPress = async () => {
     // Get the updated amount after incrementing
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // 2 seconds delay
     const currentTime = new Date().toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
     });
     const newAmount_display = glassSize + amount;
+
     try {
       await new Promise((resolve, reject) => {
         db.transaction((tx: any) => {
@@ -156,12 +162,6 @@ const Home = ({navigation}: any, props: any) => {
     fetchData();
   }, [amount]);
 
-  useEffect(() => {
-    // Delay the calculation and update the percent filled state
-    const percent = (amount / maxAmount) * 100;
-    setPercentFilled(percent);
-  }, [amount, maxAmount]);
-
   //const percentFilled = (amount / maxAmount) * 100;
 
   const handleDelete = async (id: number) => {
@@ -194,17 +194,14 @@ const Home = ({navigation}: any, props: any) => {
         <StatusBar barStyle="light-content" backgroundColor="#0085ff" />
         <View style={styles.container}>
           <Pressable onPress={setGoalPage}>
-            <CardCapacity
-              currentAmount={amount || 0}
-              goalAmount={maxAmount}
-              onDrinkPress={handleDrinkPress}
-            />
+            <CardCapacity currentAmount={amount || 0} goalAmount={maxAmount} />
           </Pressable>
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <Button
               style={{backgroundColor: '#0085ff'}}
               mode={'contained'}
-              onPress={handleDrinkPress}>
+              onPress={handleDrinkPress}
+              loading={isLoading}>
               กดเมื่อดื่ม
             </Button>
             <Button

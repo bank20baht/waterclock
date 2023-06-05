@@ -16,7 +16,8 @@ type Data = {
 
 const Statistics = (props: Props) => {
   const [data, setData] = useState<Data[]>([]);
-
+  const [avgDrinkWeek, setAvgDrinkWeek] = useState<number>(0);
+  const [avgFreqDrink, setAvgFreqDrink] = useState<number>(0);
   const fetchData = async () => {
     try {
       await new Promise<void>((resolve, reject) => {
@@ -42,6 +43,41 @@ const Statistics = (props: Props) => {
               reject(error);
             },
           );
+          tx.executeSql(
+            `SELECT AVG(sumdaily) as avgweek FROM (SELECT SUM(amount) as sumdaily FROM watertrack GROUP BY date ORDER BY date DESC LIMIT 7)`,
+            [],
+            (_: any, {rows}: any) => {
+              console.log('Data received (AVG amount) successfully');
+              if (rows.length > 0) {
+                setAvgDrinkWeek(rows.item(0).avgweek);
+              } else {
+                setAvgDrinkWeek(0);
+              }
+              resolve();
+            },
+            (error: any) => {
+              console.error('Failed to retrieve data: ', error);
+              reject(error);
+            },
+          );
+
+          tx.executeSql(
+            `SELECT AVG(freqweek) as freqweek FROM (SELECT date, COUNT(amount) as freqweek FROM watertrack WHERE date >= ? GROUP BY date ORDER BY date DESC LIMIT 7)`,
+            [sevenDaysAgo.toISOString()],
+            (_: any, {rows}: any) => {
+              console.log('Data received (Average Frequency) successfully');
+              if (rows.length > 0) {
+                setAvgFreqDrink(rows.item(0).freqweek);
+              } else {
+                setAvgFreqDrink(0);
+              }
+              resolve();
+            },
+            (error: any) => {
+              console.error('Failed to retrieve data: ', error);
+              reject(error);
+            },
+          );
         });
       });
     } catch (error) {
@@ -58,13 +94,17 @@ const Statistics = (props: Props) => {
   const screenWidth = Dimensions.get('window').width;
 
   const chartConfig = {
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientTo: '#ffffff',
-    color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+    backgroundGradientFrom: '#0085ff',
+    backgroundGradientTo: '#0085ff',
+
+    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     strokeWidth: 3,
-    barPercentage: 0.3,
+    barPercentage: 0.4,
     yAxisLabel: '',
     yAxisSuffix: '',
+    style: {
+      borderRadius: 16,
+    },
   };
 
   const chartData = {
@@ -101,15 +141,25 @@ const Statistics = (props: Props) => {
       </View>
       <Card style={{margin: 10, backgroundColor: '#2d2d2d'}}>
         <Text variant={'titleLarge'} style={{color: 'white', margin: 5}}>
-          รายงานการดื่มน้ำวันนี้
+          รายงานการดื่มน้ำอาทิตย์นี้
         </Text>
         <Card.Content>
-          <Text variant={'titleMedium'} style={{color: 'white'}}>
-            เฉลี่ยการดื่มน้ำรายอาทิตย์
-          </Text>
-          <Text variant={'titleMedium'} style={{color: 'white'}}>
-            คุณดื่มน้ำถี่เเค่ไหน
-          </Text>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Text variant={'titleMedium'} style={{color: 'white'}}>
+              ปริมาณเฉลี่ยการดื่มน้ำ
+            </Text>
+            <Text variant={'titleMedium'} style={{color: 'white'}}>
+              {avgDrinkWeek.toFixed()} ml
+            </Text>
+          </View>
+          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+            <Text variant={'titleMedium'} style={{color: 'white'}}>
+              คุณดื่มน้ำถี่เเค่ไหน
+            </Text>
+            <Text variant={'titleMedium'} style={{color: 'white'}}>
+              {avgFreqDrink.toFixed()} ครั้ง/วัน
+            </Text>
+          </View>
         </Card.Content>
       </Card>
     </View>
