@@ -39,7 +39,6 @@ const Setting = () => {
   const handleTimeChange = (event: any, selected: any) => {
     if (selected) {
       setSelectedTime(selected);
-      handlerAddTimeAlert();
     }
     setShowTimePicker(false);
   };
@@ -52,12 +51,26 @@ const Setting = () => {
     fetchData();
   }, []);
 
-  const handleCreateTriggerNotification = () => {
+  const handleCreateTriggerNotification = (date: Date) => {
+    const currentTime = Date.now(); // Get the current timestamp
+    const triggerTime = date.getTime(); // Get the timestamp of the selected date
+
+    let notificationTime;
+
+    if (currentTime > triggerTime) {
+      // If triggerTime is in the past, add 1 day to the selected date
+      const oneDayInMilliseconds = 24 * 60 * 60 * 1000;
+      const futureDate = new Date(triggerTime + oneDayInMilliseconds);
+      notificationTime = futureDate.getTime();
+    } else {
+      // Use the original triggerTime
+      notificationTime = triggerTime;
+    }
     // Display notification in 3 seconds
     displayTriggerNotification(
       'NotificationTitle',
       'NotificationBody',
-      Date.now() + 3000,
+      notificationTime + 3000,
     );
   };
 
@@ -103,6 +116,7 @@ const Setting = () => {
           );
         });
       });
+      handleCreateTriggerNotification(selectedTime);
       fetchData();
     } catch (error) {
       console.error('Failed to insert data: ', error);
@@ -142,26 +156,32 @@ const Setting = () => {
           onChange={handleTimeChange}
         />
       )}
-      <View>
+      <View
+        style={{
+          flex: 0.3,
+          margin: 5,
+          borderColor: '#0085ff',
+          borderWidth: 2,
+          alignItems: 'center',
+        }}>
         <Pressable onPress={showTimePickerModal}>
-          <Text variant={'titleLarge'} style={styles.selectedTimeText}>
+          <Text variant={'displayLarge'} style={styles.selectedTimeText}>
             {formatTime(selectedTime)}
           </Text>
         </Pressable>
-        <Button mode={'contained'} onPress={fetchData}>
-          Fetch data
-        </Button>
-        <Button mode={'contained'} onPress={handleCreateTriggerNotification}>
-          Create Trigger Notification
-        </Button>
-        <Button mode={'contained'} onPress={cancelAllNotifications}>
-          Cancel All Notifications
-        </Button>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <Button mode={'contained'} onPress={cancelAllNotifications}>
+            Cancel All Notifications
+          </Button>
+          <Button
+            mode={'contained'}
+            onPress={handlerAddTimeAlert}
+            style={{marginLeft: 5}}>
+            Create Time Alert
+          </Button>
+        </View>
       </View>
       <ScrollView>
-        <View style={styles.buttonContainer}>
-          <Button onPress={handlerAddTimeAlert}>Create Time Alert</Button>
-        </View>
         <View style={styles.cardContainer}>
           {timeAlert.map((item: any) => (
             <CardSetTime
