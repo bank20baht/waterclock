@@ -1,131 +1,173 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, StatusBar, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  StatusBar,
+  ScrollView,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CardSetTime from '../components/CardSetTime';
-import notifee, {TimestampTrigger, TriggerType} from '@notifee/react-native';
+import {Button, Text} from 'react-native-paper';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {openDatabase} from '../utils/db';
 import {useNotification} from '../src/hooks/useNotification';
-import {Button} from 'react-native-paper';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+
+const db = openDatabase();
 
 const Setting = () => {
-  const [storedValue, setStoredValue] = useState<any>([]);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [timeAlert, setTimeAlert] = useState([]);
+
   const {
     displayNotification,
     displayTriggerNotification,
     cancelAllNotifications,
   } = useNotification();
 
+  const formatTime = (date: Date) => {
+    const formatted = date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    return formatted;
+  };
+
+  const handleTimeChange = (event: any, selected: any) => {
+    if (selected) {
+      setSelectedTime(selected);
+      handlerAddTimeAlert();
+    }
+    setShowTimePicker(false);
+  };
+
+  const showTimePickerModal = () => {
+    setShowTimePicker(true);
+  };
+
   useEffect(() => {
-    getStoredValue();
+    fetchData();
   }, []);
 
-  const setTriggerFromDB = async () => {
+  const handleCreateTriggerNotification = () => {
+    // Display notification in 3 seconds
+    displayTriggerNotification(
+      'NotificationTitle',
+      'NotificationBody',
+      Date.now() + 3000,
+    );
+  };
+
+  const handleDeleteTimeAlert = async (id: number) => {
     try {
-      const storedData = await AsyncStorage.getItem('timeData');
-      if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        const promises = parsedData.map(async (item: any) => {
-          if (item.date && typeof item.date === 'string') {
-            const parsedDate = new Date(item.date);
-            if (!isNaN(parsedDate.getTime())) {
-              const notificationTime = parsedDate.getTime() + 3000;
-              await AsyncStorage.setItem(
-                'notificationTime',
-                notificationTime.toString(),
-              );
-              return displayTriggerNotification(
-                'NotificationTitle',
-                'NotificationBody',
-                notificationTime,
-              );
-            }
-          }
-          return Promise.reject(new Error('Invalid date'));
+      await new Promise((resolve, reject) => {
+        db.transaction((tx: any) => {
+          tx.executeSql(
+            'DELETE FROM timesetalert WHERE id = ?',
+            [id],
+            (_: any, result: any) => {
+              console.log('Data deleted successfully');
+              resolve(result);
+            },
+            (error: any) => {
+              console.error('Failed to delete data: ', error);
+              reject(error);
+            },
+          );
         });
-
-        await Promise.all(promises);
-        console.log('All notifications displayed');
-      }
+      });
+      fetchData();
     } catch (error) {
-      console.log('Error displaying notifications:', error);
+      console.error('Failed to delete data: ', error);
     }
   };
 
-  const getStoredValue = async () => {
+  const handlerAddTimeAlert = async () => {
     try {
-      const value = await AsyncStorage.getItem('timeData');
-      if (value !== null) {
-        setStoredValue(JSON.parse(value));
-      }
+      await new Promise((resolve, reject) => {
+        db.transaction((tx: any) => {
+          tx.executeSql(
+            'INSERT INTO timesetalert (date, time) VALUES (?,?)',
+            [selectedTime.toISOString(), formatTime(selectedTime)],
+            (_: any, result: any) => {
+              console.log('Data inserted successfully');
+              resolve(result);
+            },
+            (error: any) => {
+              console.error('Failed to insert data: ', error);
+              reject(error);
+            },
+          );
+        });
+      });
+      fetchData();
     } catch (error) {
-      console.log('Error retrieving stored value:', error);
+      console.error('Failed to insert data: ', error);
     }
   };
 
-  const deleteValue = async (item: any) => {
+  const fetchData = async () => {
     try {
-      const filteredItems = storedValue.filter(
-        (storedItem: any) => storedItem.date !== item.date,
-      );
-      await AsyncStorage.setItem('timeData', JSON.stringify(filteredItems));
-      setStoredValue(filteredItems);
-      /*
-      const index = storedValue.findIndex(
-        (storedItem: any) => storedItem.date === date,
-      );
-
-      if (index !== -1) {
-        const filteredItems = [...storedValue];
-        filteredItems.splice(index, 1);
-
-        await AsyncStorage.setItem('timeData', JSON.stringify(filteredItems));
-        setStoredValue(filteredItems);
-      */
+      await new Promise((resolve, reject) => {
+        db.transaction((tx: any) => {
+          tx.executeSql(
+            'SELECT id, date, time FROM timesetalert ORDER BY id DESC',
+            [],
+            (_: any, {rows}: any) => {
+              setTimeAlert(rows.raw());
+            },
+            (error: any) => {
+              console.error('Failed to retrieve data: ', error);
+              reject(error);
+            },
+          );
+        });
+      });
     } catch (error) {
-      console.log('Error deleting value:', error);
-    }
-  };
-
-  const saveTimeToDB = async () => {
-    try {
-      const currentDate = new Date();
-      const storedTime = await AsyncStorage.getItem('timeData');
-
-      if (storedTime) {
-        const parsedData = JSON.parse(storedTime);
-        const updatedData = [
-          ...parsedData,
-          {date: currentDate, switchOn: false},
-        ];
-        await AsyncStorage.setItem('timeData', JSON.stringify(updatedData));
-        setStoredValue(updatedData);
-      } else {
-        const initialData = [{date: currentDate, switchOn: false}];
-        await AsyncStorage.setItem('timeData', JSON.stringify(initialData));
-        setStoredValue(initialData);
-      }
-    } catch (error) {
-      console.log(error);
+      console.error('An error occurred:', error);
     }
   };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#0085ff" />
+      {showTimePicker && (
+        <DateTimePicker
+          mode="time"
+          display={'clock'}
+          value={selectedTime}
+          onChange={handleTimeChange}
+        />
+      )}
+      <View>
+        <Pressable onPress={showTimePickerModal}>
+          <Text variant={'titleLarge'} style={styles.selectedTimeText}>
+            {formatTime(selectedTime)}
+          </Text>
+        </Pressable>
+        <Button mode={'contained'} onPress={fetchData}>
+          Fetch data
+        </Button>
+        <Button mode={'contained'} onPress={handleCreateTriggerNotification}>
+          Create Trigger Notification
+        </Button>
+        <Button mode={'contained'} onPress={cancelAllNotifications}>
+          Cancel All Notifications
+        </Button>
+      </View>
       <ScrollView>
         <View style={styles.buttonContainer}>
-          <Button onPress={saveTimeToDB}>"Create Trigger Notification"</Button>
+          <Button onPress={handlerAddTimeAlert}>Create Time Alert</Button>
         </View>
-        <Button onPress={setTriggerFromDB} mode={'contained'}>
-          Test triger noti
-        </Button>
         <View style={styles.cardContainer}>
-          {storedValue.map((item: any, index: any) => (
+          {timeAlert.map((item: any) => (
             <CardSetTime
-              id={index}
-              date={item.date}
-              switchOn={item.switchOn}
-              key={index}
-              onDelete={() => deleteValue(item)}
+              value={item}
+              key={item.id}
+              onDelete={handleDeleteTimeAlert}
             />
           ))}
         </View>
@@ -146,6 +188,10 @@ const styles = StyleSheet.create({
   cardContainer: {
     marginVertical: 5,
     justifyContent: 'center',
+  },
+  selectedTimeText: {
+    color: 'white',
+    textAlign: 'center',
   },
 });
 
