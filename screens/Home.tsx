@@ -202,14 +202,14 @@ const Home = ({navigation}: any, props: any) => {
               mode={'contained'}
               onPress={handleDrinkPress}
               loading={isLoading}>
-              กดเมื่อดื่ม
+              <Text style={{color: 'white'}}>กดเมื่อดื่ม</Text>
             </Button>
             <Button
               style={{backgroundColor: '#0085ff', marginLeft: 5}}
               onPress={showDialog}
               mode={'contained'}
               icon={'refresh'}>
-              {glassSize} ml.
+              <Text style={{color: 'white'}}>{glassSize} ml.</Text>
             </Button>
           </View>
           <Text style={{color: 'white'}}>รายการวันนี้</Text>

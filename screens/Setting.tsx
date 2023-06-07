@@ -26,6 +26,7 @@ const Setting = () => {
     displayNotification,
     displayTriggerNotification,
     cancelAllNotifications,
+    cancelNotification,
   } = useNotification();
 
   const formatTime = (date: Date) => {
@@ -67,19 +68,34 @@ const Setting = () => {
       notificationTime = triggerTime;
     }
     // Display notification in 3 seconds
-    displayTriggerNotification(
+    const notification_Id = displayTriggerNotification(
       'ถึงเวลาดื่มน้ำเเล้วนะ',
       'ถึงเวลาดื่มน้ำเเล้ว กินน้ำให้พอดีกับความต้องการกันเถอะ',
       notificationTime + 3000,
     );
+    console.log(notification_Id);
+    return notification_Id;
   };
 
   const handleDeleteTimeAlert = async (id: number) => {
     try {
-      await new Promise((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         db.transaction((tx: any) => {
           tx.executeSql(
-            'DELETE FROM timesetalert WHERE id = ?',
+            'SELECT notificationId FROM settimealert WHERE id = ?',
+            [id],
+            (_: any, result: any) => {
+              const notificationId = result.rows.item(0).notificationId;
+              cancelNotification(notificationId); // Cancel the notification
+              resolve();
+            },
+            (error: any) => {
+              console.error('Failed to retrieve notificationId: ', error);
+              reject(error);
+            },
+          );
+          tx.executeSql(
+            'DELETE FROM settimealert WHERE id = ?',
             [id],
             (_: any, result: any) => {
               console.log('Data deleted successfully');
@@ -100,11 +116,16 @@ const Setting = () => {
 
   const handlerAddTimeAlert = async () => {
     try {
+      const notification_Id = handleCreateTriggerNotification(selectedTime);
       await new Promise((resolve, reject) => {
         db.transaction((tx: any) => {
           tx.executeSql(
-            'INSERT INTO timesetalert (date, time) VALUES (?,?)',
-            [selectedTime.toISOString(), formatTime(selectedTime)],
+            'INSERT INTO settimealert (date, time,notificationId) VALUES (?,?,?)',
+            [
+              selectedTime.toISOString(),
+              formatTime(selectedTime),
+              notification_Id.toString(),
+            ],
             (_: any, result: any) => {
               console.log('Data inserted successfully');
               resolve(result);
@@ -116,7 +137,7 @@ const Setting = () => {
           );
         });
       });
-      handleCreateTriggerNotification(selectedTime);
+
       fetchData();
     } catch (error) {
       console.error('Failed to insert data: ', error);
@@ -128,9 +149,10 @@ const Setting = () => {
       await new Promise((resolve, reject) => {
         db.transaction((tx: any) => {
           tx.executeSql(
-            'SELECT id, date, time FROM timesetalert ORDER BY id DESC',
+            'SELECT id, date, time, notificationId FROM settimealert ORDER BY id DESC',
             [],
             (_: any, {rows}: any) => {
+              console.log(rows.raw());
               setTimeAlert(rows.raw());
             },
             (error: any) => {
@@ -168,17 +190,14 @@ const Setting = () => {
           <Text variant={'displayLarge'} style={styles.selectedTimeText}>
             {formatTime(selectedTime)}
           </Text>
-          <Text style={styles.selectedTimeText}>เเตะเพื่อตั้งเวลา</Text>
+          <Text style={styles.selectedTimeText}>^ เเตะเพื่อตั้งเวลา ^</Text>
         </Pressable>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-          <Button mode={'contained'} onPress={cancelAllNotifications}>
-            Cancel All Notifications
-          </Button>
           <Button
             mode={'contained'}
             onPress={handlerAddTimeAlert}
-            style={{marginLeft: 5}}>
-            Create Time Alert
+            style={{backgroundColor: '#0085ff'}}>
+            <Text style={{color: 'white'}}>เเจ้งเตือนตามเวลานี้</Text>
           </Button>
         </View>
       </View>
