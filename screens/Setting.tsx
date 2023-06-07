@@ -68,8 +68,8 @@ const Setting = () => {
     }
     // Display notification in 3 seconds
     displayTriggerNotification(
-      'NotificationTitle',
-      'NotificationBody',
+      'ถึงเวลาดื่มน้ำเเล้วนะ',
+      'ถึงเวลาดื่มน้ำเเล้ว กินน้ำให้พอดีกับความต้องการกันเถอะ',
       notificationTime + 3000,
     );
   };
@@ -164,10 +164,11 @@ const Setting = () => {
           borderWidth: 2,
           alignItems: 'center',
         }}>
-        <Pressable onPress={showTimePickerModal}>
+        <Pressable onPress={showTimePickerModal} style={{marginVertical: 5}}>
           <Text variant={'displayLarge'} style={styles.selectedTimeText}>
             {formatTime(selectedTime)}
           </Text>
+          <Text style={styles.selectedTimeText}>เเตะเพื่อตั้งเวลา</Text>
         </Pressable>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <Button mode={'contained'} onPress={cancelAllNotifications}>
@@ -181,7 +182,7 @@ const Setting = () => {
           </Button>
         </View>
       </View>
-      <ScrollView>
+      <ScrollView style={{flex: 0.7}}>
         <View style={styles.cardContainer}>
           {timeAlert.map((item: any) => (
             <CardSetTime
